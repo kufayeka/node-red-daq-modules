@@ -1,0 +1,153 @@
+<script type="text/javascript">
+    RED.nodes.registerType('DAQ-GetValue', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value: ""},
+            namespacePath: {value: ""},
+            outputMode: {value: "value"}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-exchange",
+        align: "left",
+        label: function () {
+            return this.name || "DAQ-GetValue";
+        },
+        oneditprepare: function () {
+            var node = this;
+
+            // Function to load namespace paths
+            function loadNamespacePaths() {
+                $.getJSON('/daq/namespaces', function (data) {
+                    var select = $('#node-input-namespacePath');
+                    select.empty();
+
+                    // Add empty option
+                    select.append($('<option></option>').val('').text('-- Select a path --'));
+
+                    // Add all paths
+                    data.forEach(function (path) {
+                        var option = $('<option></option>').val(path).text(path);
+                        select.append(option);
+                    });
+
+                    // Select current value if it exists
+                    if (node.namespacePath) {
+                        select.val(node.namespacePath);
+                    }
+                }).fail(function () {
+                    console.log("Failed to load namespace paths. This may happen if no DAQ-Metadata nodes have run yet.");
+                });
+            }
+
+            // Load paths initially
+            loadNamespacePaths();
+
+            // Add clear button handler
+            $('#clear-daqstore-btn').on('click', function () {
+                if (confirm("Are you sure you want to clear all DAQ store data?")) {
+                    $.ajax({
+                        url: '/daq/clear',
+                        type: 'POST',
+                        success: function () {
+                            RED.notify("DAQ store cleared successfully", "success");
+                            loadNamespacePaths(); // Reload the empty dropdown
+                        },
+                        error: function () {
+                            RED.notify("Failed to clear DAQ store", "error");
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="DAQ-GetValue">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-namespacePath"><i class="fa fa-sitemap"></i> Namespace Path</label>
+        <select id="node-input-namespacePath" style="width: 70%">
+            <option value="">-- Select a path --</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="fa fa-long-arrow-right"></i> Output Format</label>
+        <select id="node-input-outputMode">
+            <option value="value">Parsed value only (in msg.payload)</option>
+            <option value="raw">Raw value (in msg.payload)</option>
+            <option value="metadata">Complete metadata (in msg.payload)</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <button id="clear-daqstore-btn" class="red-ui-button"
+                style="background-color: #f8d7da; border-color: #f5c6cb; color: #721c24;">
+            <i class="fa fa-trash"></i> Clear DAQ Store
+        </button>
+        <div style="margin-top: 5px; font-size: 12px; color: #721c24;">
+            Warning: This will clear all DAQ data from global context and refresh the namespace list.
+        </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-row branded">
+        <p>Created by: <strong>@kufayeka</strong></p>
+    </div>
+
+    <style>
+        /* divider */
+        .divider {
+            border-top: 1px solid #ccc;
+            margin: 12px 0;
+        }
+        /* branding box */
+        .branded {
+            background: #2575fc;
+            text-align: center;
+            padding: 6px 0;
+            border-radius: 4px;
+        }
+        .branded p {
+            margin: 0;
+            color: white;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+        }
+        .devicePrefix { border: 1px solid #ccc; padding: 5px; border-radius: 2px; }
+    </style>
+</script>
+
+<script type="text/html" data-help-name="DAQ-GetValue">
+    <p>Retrieves values from the DAQ store using unified namespace paths</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">any</span></dt>
+        <dd>Original input payload (not used)</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">any</span></dt>
+        <dd>The parsed value, raw value, or complete metadata based on output format</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>This node retrieves values from the DAQ store that were previously saved by DAQ-Metadata nodes.
+        The values are available through the namespace dropdown.</p>
+
+    <p>Output format options:</p>
+    <ul>
+        <li><strong>Parsed value</strong> - Converts the value to the appropriate data type</li>
+        <li><strong>Raw value</strong> - Returns the original unparsed value</li>
+        <li><strong>Complete metadata</strong> - Returns the entire metadata object</li>
+    </ul>
+</script>

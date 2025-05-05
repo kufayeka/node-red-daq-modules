@@ -1,0 +1,24 @@
+{
+  "name": "@kufayeka/daq-modules",
+  "version": "0.1.0",
+  "author": "kufayeka",
+  "license": "ISC",
+  "description": "Javindotech DAQ Modules for Node-RED",
+  "keywords": [
+    "node-red",
+    "node-red-node"
+  ],
+  "node-red": {
+    "nodes": {
+      "DAQ-MetaData": "daq-metadata.js",
+      "DAQ-GetValue": "daq-getValue.js",
+      "DAQ-TagLogger": "daq-tagLogger.js",
+      "DAQ-TagLogGetter": "daq-tagLogGetter.js",
+      "DAQ-Accumulator": "daq-accumulator.js"
+    }
+  },
+  "dependencies": {
+    "object-path": "^0.11.8",
+    "uuid": "^11.1.0"
+  }
+}

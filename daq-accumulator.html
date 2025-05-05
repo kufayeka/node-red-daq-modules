@@ -1,0 +1,122 @@
+<script type="text/javascript">
+    RED.nodes.registerType('DAQ-Accumulator', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value: ""},
+            accumulatorType: {value: "delta"},
+            deltaMode: {value: "last-first"},
+            countValue: {value: "true"},
+            timeMode: {value: "total"},
+            targetNamespace: {value: ""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-calculator",
+        align: "left",
+        label: function () {
+            return this.name || "DAQ-Accumulator";
+        },
+        oneditprepare: function () {
+            var node = this;
+
+            // Show/hide specific type settings
+            $('#node-input-accumulatorType').on('change', function() {
+                const type = $(this).val();
+                $('.type-specific').hide();
+                $(`.type-${type}`).show();
+            });
+
+            // Initialize type-specific settings
+            const type = $('#node-input-accumulatorType').val();
+            $('.type-specific').hide();
+            $(`.type-${type}`).show();
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="DAQ-Accumulator">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-accumulatorType"><i class="fa fa-tasks"></i> Type</label>
+        <select id="node-input-accumulatorType">
+            <option value="delta">Delta Value</option>
+            <option value="count">Count Values</option>
+            <option value="time">Time in State</option>
+            <option value="sum">Sum Values</option>
+            <option value="average">Average Value</option>
+            <option value="minmax">Min/Max Values</option>
+        </select>
+    </div>
+
+    <!-- Type-specific settings -->
+    <div class="type-specific type-delta">
+        <div class="form-row">
+            <label for="node-input-deltaMode"><i class="fa fa-exchange"></i> Delta Mode</label>
+            <select id="node-input-deltaMode">
+                <option value="last-first">Last Value - First Value</option>
+                <option value="first-last">First Value - Last Value</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="type-specific type-count">
+        <div class="form-row">
+            <label for="node-input-countValue"><i class="fa fa-filter"></i> Count Value</label>
+            <input type="text" id="node-input-countValue" placeholder="Value to count">
+        </div>
+    </div>
+
+    <div class="type-specific type-time">
+        <div class="form-row">
+            <label for="node-input-timeMode"><i class="fa fa-clock-o"></i> Time Mode</label>
+            <select id="node-input-timeMode">
+                <option value="total">Total Time</option>
+                <option value="state">Time in Specific State</option>
+            </select>
+        </div>
+        <div class="form-row" id="time-state-row">
+            <label for="node-input-countValue"><i class="fa fa-filter"></i> State Value</label>
+            <input type="text" id="node-input-countValue" placeholder="true">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-targetNamespace"><i class="fa fa-sitemap"></i> Target Namespace</label>
+        <input type="text" id="node-input-targetNamespace" placeholder="Optional namespace to store result">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="DAQ-Accumulator">
+    <p>Processes arrays of timestamped data for various calculations and accumulations</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">array</span></dt>
+        <dd>Array of objects with timestamp (ts), tag_id, and value properties</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Result of the calculation with original data and computed value</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>This node processes arrays of timestamped data with modes:</p>
+
+    <ul>
+        <li><strong>Delta Value:</strong> Calculate difference between first and last values</li>
+        <li><strong>Count Values:</strong> Count occurrences of specific value</li>
+        <li><strong>Time in State:</strong> Calculate time spent in specific state</li>
+        <li><strong>Sum Values:</strong> Sum all numeric values</li>
+        <li><strong>Average Value:</strong> Calculate average of numeric values</li>
+        <li><strong>Min/Max Values:</strong> Find minimum and maximum values</li>
+    </ul>
+
+    <p>Input data format: <code>[{"ts":"2025-05-03T17:51:00.003Z","tag_id":"55d343a81b96af46","value":"48379"}, ...]</code></p>
+</script>

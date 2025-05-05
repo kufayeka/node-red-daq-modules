@@ -1,0 +1,226 @@
+<script type="text/javascript">
+    RED.nodes.registerType('DAQ-TagLogger', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value: ""},
+            namespacePath: {value: ""},
+
+            tagProperties1Path: {value: ""},
+            tagProperties1Type: {value: "whole"},
+            tagProperties1ValuePath: {value: ""},
+
+            tagProperties2Path: {value: ""},
+            tagProperties2Type: {value: "whole"},
+            tagProperties2ValuePath: {value: ""},
+
+            tagProperties3Path: {value: ""},
+            tagProperties3Type: {value: "whole"},
+            tagProperties3ValuePath: {value: ""},
+
+            tagProperties4Path: {value: ""},
+            tagProperties4Type: {value: "whole"},
+            tagProperties4ValuePath: {value: ""},
+
+            tagProperties5Path: {value: ""},
+            tagProperties5Type: {value: "whole"},
+            tagProperties5ValuePath: {value: ""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-exchange",
+        align: "left",
+        label: function () {
+            return this.name || "DAQ-TagLogger";
+        },
+        oneditprepare: function () {
+            var node = this;
+
+            function loadNamespacePaths(selector) {
+                $.getJSON('/daq/namespaces', function (data) {
+                    var select = $(selector);
+                    select.empty().append($('<option></option>').val('').text('-- Select --'));
+                    data.forEach(function (path) {
+                        select.append($('<option></option>').val(path).text(path));
+                    });
+                    select.val(node[selector.replace('#node-input-', '')] || '');
+                });
+            }
+
+            // Load untuk semua selector
+            loadNamespacePaths('#node-input-namespacePath');
+            loadNamespacePaths('#node-input-tagProperties1Path');
+            loadNamespacePaths('#node-input-tagProperties2Path');
+            loadNamespacePaths('#node-input-tagProperties3Path');
+            loadNamespacePaths('#node-input-tagProperties4Path');
+            loadNamespacePaths('#node-input-tagProperties5Path');
+
+            // Handle type change
+            $('.tag-property-type').on('change', function() {
+                const pathRow = $(this).closest('.form-row').next('.tag-property-path');
+                pathRow.toggle($(this).val() === 'specific');
+            }).trigger('change');
+
+            // Inisialisasi nilai
+            $('#node-input-tagProperties1Type').val(node.tagProperties1Type);
+            $('#node-input-tagProperties2Type').val(node.tagProperties2Type);
+            $('#node-input-tagProperties3Type').val(node.tagProperties3Type);
+            $('#node-input-tagProperties4Type').val(node.tagProperties4Type);
+            $('#node-input-tagProperties5Type').val(node.tagProperties5Type);
+
+            $('#node-input-tagProperties1ValuePath').val(node.tagProperties1ValuePath);
+            $('#node-input-tagProperties2ValuePath').val(node.tagProperties2ValuePath);
+            $('#node-input-tagProperties3ValuePath').val(node.tagProperties3ValuePath);
+            $('#node-input-tagProperties4ValuePath').val(node.tagProperties4ValuePath);
+            $('#node-input-tagProperties5ValuePath').val(node.tagProperties5ValuePath);
+
+            // Clear button handler
+            $('#clear-daqstore-btn').on('click', function() {
+                if (confirm("Are you sure you want to clear all DAQ store data?")) {
+                    $.post('/daq/clear').done(function() {
+                        RED.notify("DAQ store cleared", "success");
+                        $('.tag-property-ns').each(function() { loadNamespacePaths('#'+this.id); });
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="DAQ-TagLogger">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-namespacePath"><i class="fa fa-sitemap"></i> Main Namespace</label>
+        <select id="node-input-namespacePath" style="width: 70%">
+            <option value="">-- Select a namespace --</option>
+        </select>
+    </div>
+
+    <!-- Tag Property 1 -->
+    <div class="divider"></div>
+    <div class="form-row">
+        <label><i class="fa fa-tags"></i> Tag Property 1</label>
+        <select id="node-input-tagProperties1Path" class="tag-property-ns" style="width: 48%">
+            <option value="">-- Select Namespace --</option>
+        </select>
+        <select id="node-input-tagProperties1Type" class="tag-property-type" style="width: 28%; margin-left: 2%">
+            <option value="whole">Whole Data</option>
+            <option value="specific">Specific Path</option>
+        </select>
+    </div>
+    <div class="form-row tag-property-path" style="padding-left: 25px;">
+        <label for="node-input-tagProperties1ValuePath">Value Path</label>
+        <input type="text" id="node-input-tagProperties1ValuePath" placeholder="e.g., value.workOrder">
+    </div>
+
+    <!-- Tag Property 2 -->
+    <div class="divider"></div>
+    <div class="form-row">
+        <label><i class="fa fa-tags"></i> Tag Property 2</label>
+        <select id="node-input-tagProperties2Path" class="tag-property-ns" style="width: 48%">
+            <option value="">-- Select Namespace --</option>
+        </select>
+        <select id="node-input-tagProperties2Type" class="tag-property-type" style="width: 28%; margin-left: 2%">
+            <option value="whole">Whole Data</option>
+            <option value="specific">Specific Path</option>
+        </select>
+    </div>
+    <div class="form-row tag-property-path" style="padding-left: 25px;">
+        <label for="node-input-tagProperties2ValuePath">Value Path</label>
+        <input type="text" id="node-input-tagProperties2ValuePath" placeholder="e.g., value.serialNumber">
+    </div>
+
+    <!-- Tag Property 3 -->
+    <div class="divider"></div>
+    <div class="form-row">
+        <label><i class="fa fa-tags"></i> Tag Property 3</label>
+        <select id="node-input-tagProperties3Path" class="tag-property-ns" style="width: 48%">
+            <option value="">-- Select Namespace --</option>
+        </select>
+        <select id="node-input-tagProperties3Type" class="tag-property-type" style="width: 28%; margin-left: 2%">
+            <option value="whole">Whole Data</option>
+            <option value="specific">Specific Path</option>
+        </select>
+    </div>
+    <div class="form-row tag-property-path" style="padding-left: 25px;">
+        <label for="node-input-tagProperties3ValuePath">Value Path</label>
+        <input type="text" id="node-input-tagProperties3ValuePath" placeholder="e.g., value.batchId">
+    </div>
+
+    <!-- Tag Property 4 -->
+    <div class="divider"></div>
+    <div class="form-row">
+        <label><i class="fa fa-tags"></i> Tag Property 4</label>
+        <select id="node-input-tagProperties4Path" class="tag-property-ns" style="width: 48%">
+            <option value="">-- Select Namespace --</option>
+        </select>
+        <select id="node-input-tagProperties4Type" class="tag-property-type" style="width: 28%; margin-left: 2%">
+            <option value="whole">Whole Data</option>
+            <option value="specific">Specific Path</option>
+        </select>
+    </div>
+    <div class="form-row tag-property-path" style="padding-left: 25px;">
+        <label for="node-input-tagProperties4ValuePath">Value Path</label>
+        <input type="text" id="node-input-tagProperties4ValuePath" placeholder="e.g., value.batchId">
+    </div>
+
+    <!-- Tag Property 5 -->
+    <div class="divider"></div>
+    <div class="form-row">
+        <label><i class="fa fa-tags"></i> Tag Property 5</label>
+        <select id="node-input-tagProperties5Path" class="tag-property-ns" style="width: 48%">
+            <option value="">-- Select Namespace --</option>
+        </select>
+        <select id="node-input-tagProperties5Type" class="tag-property-type" style="width: 28%; margin-left: 2%">
+            <option value="whole">Whole Data</option>
+            <option value="specific">Specific Path</option>
+        </select>
+    </div>
+    <div class="form-row tag-property-path" style="padding-left: 25px;">
+        <label for="node-input-tagProperties5ValuePath">Value Path</label>
+        <input type="text" id="node-input-tagProperties5ValuePath" placeholder="e.g., value.batchId">
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <button id="clear-daqstore-btn" class="red-ui-button" style="background-color: #f8d7da; color: #721c24;">
+            <i class="fa fa-trash"></i> Clear DAQ Store
+        </button>
+        <div style="margin-top: 5px; font-size: 12px; color: #721c24;">
+            Warning: This will clear all DAQ data from global context
+        </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-row branded">
+        <p>Created by: <strong>@kufayeka</strong></p>
+    </div>
+
+    <style>
+        .divider { border-top: 1px solid #ccc; margin: 12px 0; }
+        .branded {
+            background: #2575fc;
+            padding: 6px 0;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .branded p { color: white; margin: 0; }
+        .tag-property-path { display: none; }
+    </style>
+</script>
+
+<script type="text/html" data-help-name="DAQ-TagLogger">
+    <p>Logs DAQ values to SQL with up to 3 additional tag properties</p>
+    <p>Features:</p>
+    <ul>
+        <li>Select main namespace for primary value</li>
+        <li>3 configurable tag properties</li>
+        <li>Supports whole object or specific path extraction</li>
+        <li>Automatic namespace discovery</li>
+    </ul>
+</script>

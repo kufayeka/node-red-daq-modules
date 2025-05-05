@@ -1,0 +1,222 @@
+<script type="text/javascript">
+    RED.nodes.registerType('DAQ-TagLogGetter', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value: ""},
+            namespacePath: {value: ""},
+            timeMode: {value: "between"},
+            startTimestamp: {value: ""},
+            endTimestamp: {value: ""},
+            exactTimestamp: {value: ""},
+            windowAmount: {value: "5"},
+            windowUnit: {value: "m"},
+            useProp1: {value: false},
+            prop1Operator: {value: "="},
+            prop1Value: {value: ""},
+            prop1Logic: {value: "AND"},
+            useProp2: {value: false},
+            prop2Operator: {value: "="},
+            prop2Value: {value: ""},
+            prop2Logic: {value: "AND"},
+            useProp3: {value: false},
+            prop3Operator: {value: "="},
+            prop3Value: {value: ""},
+            prop3Logic: {value: "AND"},
+            useProp4: {value: false},
+            prop4Operator: {value: "="},
+            prop4Value: {value: ""},
+            prop4Logic: {value: "AND"},
+            useProp5: {value: false},
+            prop5Operator: {value: "="},
+            prop5Value: {value: ""},
+            prop5Logic: {value: "AND"}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-database",
+        label: function () {
+            return this.name || "DAQ-TagLogGetter";
+        },
+        oneditprepare: function () {
+            var node = this;
+
+            function loadNamespacePaths() {
+                $.getJSON('/daq/namespaces', function (data) {
+                    var select = $('#node-input-namespacePath');
+                    select.empty().append('<option value="">-- Select a path --</option>');
+                    data.forEach(path => select.append($('<option></option>').val(path).text(path)));
+                    if (node.namespacePath) select.val(node.namespacePath);
+                }).fail(() => console.log("Failed to load namespace paths"));
+            }
+
+            loadNamespacePaths();
+            $('#node-input-timeMode').on('change', function () {
+                $('.mode-row').hide();
+                $('.mode-' + $(this).val()).show();
+            }).trigger('change');
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="DAQ-TagLogGetter">
+    <div class="form-row">
+        <label for="node-input-name">Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-namespacePath">Namespace</label>
+        <select id="node-input-namespacePath" style="width:100%"></select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-timeMode">Time Mode</label>
+        <select id="node-input-timeMode">
+            <option value="between">Between</option>
+            <option value="exact">Exact</option>
+            <option value="window">Window</option>
+            <option value="all">All Time</option>
+        </select>
+    </div>
+
+    <!-- Time Configuration -->
+    <div class="form-row mode-row mode-between">
+        <label>Start Time</label>
+        <input type="text" id="node-input-startTimestamp" placeholder="YYYY-MM-DDTHH:MM:SSZ">
+    </div>
+    <div class="form-row mode-row mode-between">
+        <label>End Time</label>
+        <input type="text" id="node-input-endTimestamp" placeholder="YYYY-MM-DDTHH:MM:SSZ">
+    </div>
+    <div class="form-row mode-row mode-exact">
+        <label>Exact Time</label>
+        <input type="text" id="node-input-exactTimestamp" placeholder="YYYY-MM-DDTHH:MM:SSZ">
+    </div>
+    <div class="form-row mode-row mode-window">
+        <label>Last</label>
+        <input type="number" id="node-input-windowAmount" style="width: 60px;" min="1">
+        <select id="node-input-windowUnit" style="width: auto;">
+            <option value="s">seconds</option>
+            <option value="m">minutes</option>
+            <option value="h">hours</option>
+            <option value="d">days</option>
+            <option value="M">months</option>
+            <option value="y">years</option>
+        </select>
+    </div>
+
+    <!-- Tag Properties Section -->
+    <div class="form-row">
+        <label style="font-weight: bold; margin-top: 15px;">Tag Properties Conditions</label>
+    </div>
+
+    <!-- Property 1-5 -->
+    <div class="form-row prop-condition" style="margin-bottom: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="checkbox" id="node-input-useProp1" style="margin-right: 2px;">
+            <label style="min-width: 70px;">Property 1</label>
+            <select id="node-input-prop1Operator" style="width: 80px;">
+                <option value="=">=</option>
+                <option value="!=">!=</option>
+                <option value=">">></option>
+                <option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop1Value" placeholder="Value" style="width: 200px;">
+            <select id="node-input-prop1Logic" style="width: 80px;">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Repeat for Properties 2-5 -->
+    <div class="form-row prop-condition" style="margin-bottom: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="checkbox" id="node-input-useProp2" style="margin-right: 2px;">
+            <label style="min-width: 70px;">Property 2</label>
+            <select id="node-input-prop2Operator" style="width: 80px;">
+                <option value="=">=</option>
+                <option value="!=">!=</option>
+                <option value=">">></option>
+                <option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop2Value" placeholder="Value" style="width: 200px;">
+            <select id="node-input-prop2Logic" style="width: 80px;">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row prop-condition" style="margin-bottom: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="checkbox" id="node-input-useProp3" style="margin-right: 2px;">
+            <label style="min-width: 70px;">Property 3</label>
+            <select id="node-input-prop3Operator" style="width: 80px;">
+                <option value="=">=</option>
+                <option value="!=">!=</option>
+                <option value=">">></option>
+                <option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop3Value" placeholder="Value" style="width: 200px;">
+            <select id="node-input-prop3Logic" style="width: 80px;">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row prop-condition" style="margin-bottom: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="checkbox" id="node-input-useProp4" style="margin-right: 2px;">
+            <label style="min-width: 70px;">Property 4</label>
+            <select id="node-input-prop4Operator" style="width: 80px;">
+                <option value="=">=</option>
+                <option value="!=">!=</option>
+                <option value=">">></option>
+                <option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop4Value" placeholder="Value" style="width: 200px;">
+            <select id="node-input-prop4Logic" style="width: 80px;">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row prop-condition" style="margin-bottom: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="checkbox" id="node-input-useProp5" style="margin-right: 2px;">
+            <label style="min-width: 70px;">Property 5</label>
+            <select id="node-input-prop5Operator" style="width: 80px;">
+                <option value="=">=</option>
+                <option value="!=">!=</option>
+                <option value=">">></option>
+                <option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop5Value" placeholder="Value" style="width: 200px;">
+            <select id="node-input-prop5Logic" style="width: 80px;">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="DAQ-TagLogGetter">
+    <p>Generates SQL query for <code>daq_metrics</code> table with dynamic filters.</p>
+    <h3>Features:</h3>
+    <ul>
+        <li>Time filtering: Between, Exact, Time Window, or All Time</li>
+        <li>5 configurable tag property conditions with AND/OR logic</li>
+        <li>Operators: =, !=, >, <, LIKE</li>
+        <li>Values can be set via config or message input</li>
+        <li>Automatic query sanitization</li>
+    </ul>
+</script>

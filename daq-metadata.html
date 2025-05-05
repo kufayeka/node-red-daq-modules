@@ -1,0 +1,167 @@
+<script type="text/javascript">
+    RED.nodes.registerType('DAQ-Metadata', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            tag_id: {value: ""},
+            tag_name: {value: ""},
+            tag_group: {value: ""},
+            location: {value: ""},
+            plant_name: {value: ""},
+            floor_name: {value: ""},
+            device_group: {value: ""},
+            device_name: {value: ""},
+            data_type: {value: "bool"},
+            quality: {value: "normal"},
+            unit: {value: ""},
+            description: {value: ""},
+            valuePath: {value: "payload"},
+            valuePathType: { value: "msg" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-database",
+        align: "left",
+        label: function() {
+            // var dev = this.device_name || "";
+            // var tag = this.tag_name   || "";
+            // if (dev || tag) {
+            //     return "[" + dev + "][" + tag + "]";
+            // }
+            return "DAQ-Metadata";
+        },
+        oneditprepare: function() {
+            // Hanya generate sekali jika tag_id kosong
+            if (!this.tag_id) {
+                this.tag_id = generateUUID();
+            }
+
+            // Tampilkan di UI
+            $("#node-input-tag_id").val(this.tag_id);
+
+
+            // topic
+            $('#node-input-valuePath').typedInput({
+                default: 'str',
+                typeField: $('#node-input-valuePathType'),
+                types: ["msg", "flow", "global"]
+            })
+        }
+    });
+
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+</script>
+
+<script type="text/html" data-template-name="DAQ-Metadata">
+
+    <div class="form-row" style="padding-left: 25px;">
+        <label for="node-input-topic" style="margin-right:-25px">Value Path</label>
+        <input type="text" id="node-input-valuePath">
+        <input type="hidden" id="node-input-valuePathType">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="form-row">
+        <label for="node-input-location"><i class="fa fa-map-marker"></i> Location</label>
+        <input type="text" id="node-input-location" placeholder="Location">
+    </div>
+    <div class="form-row">
+        <label for="node-input-plant_name"><i class="fa fa-industry"></i> Plant Name</label>
+        <input type="text" id="node-input-plant_name" placeholder="Plant Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-floor_name"><i class="fa fa-building"></i> Floor Name</label>
+        <input type="text" id="node-input-floor_name" placeholder="Floor">
+    </div>
+    <div class="form-row">
+        <label for="node-input-device_group"><i class="fa fa-cubes"></i> Device Group</label>
+        <input type="text" id="node-input-device_group" placeholder="Device Group">
+    </div>
+    <div class="form-row">
+        <label for="node-input-device_name"><i class="fa fa-cube"></i> Device Name</label>
+        <input type="text" id="node-input-device_name" placeholder="Device Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-tag_group"><i class="fa fa-users"></i> Tag Group</label>
+        <input type="text" id="node-input-tag_group" placeholder="Tag Group">
+    </div>
+    <div class="form-row">
+        <label for="node-input-tag_name"><i class="fa fa-font"></i> Tag Name</label>
+        <input type="text" id="node-input-tag_name" placeholder="Tag Name">
+    </div>
+
+
+
+    <div class="form-row">
+        <label for="node-input-data_type"><i class="fa fa-database"></i> Data Type</label>
+        <select id="node-input-data_type">
+            <option value="bool">Boolean</option>
+            <option value="int">Integer</option>
+            <option value="float">Float</option>
+            <option value="string">String</option>
+            <option value="array">Array</option>
+            <option value="object">Object</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-quality"><i class="fa fa-check-circle"></i> Quality</label>
+        <select id="node-input-quality">
+            <option value="normal">Normal</option>
+            <option value="error">Error</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-unit"><i class="fa fa-balance-scale"></i> Unit</label>
+        <input type="text" id="node-input-unit" placeholder="Unit">
+    </div>
+    <div class="form-row">
+        <label for="node-input-description"><i class="fa fa-comment"></i> Description</label>
+        <input type="text" id="node-input-description" placeholder="Description">
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-row branded">
+        <p>Created by: <strong>@kufayeka</strong></p>
+    </div>
+
+    <style>
+        /* divider */
+        .divider {
+            border-top: 1px solid #ccc;
+            margin: 12px 0;
+        }
+        /* branding box */
+        .branded {
+            background: #2575fc;
+            text-align: center;
+            padding: 6px 0;
+            border-radius: 4px;
+        }
+        .branded p {
+            margin: 0;
+            color: white;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+        }
+        .devicePrefix { border: 1px solid #ccc; padding: 5px; border-radius: 2px; }
+    </style>
+
+</script>
+
+
+<script type="text/html" data-help-name="DAQ-Metadata">
+    <p>DAQ-Metadata node untuk memproses metadata tag industrial</p>
+    <h3>Inputs</h3>
+    <ul>
+        <li>Input 1: Payload utama</li>
+    </ul>
+    <h3>Details</h3>
+    <p>Membangun metadata tag dari konfigurasi node</p>
+</script>
