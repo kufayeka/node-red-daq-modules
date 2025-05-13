@@ -14,7 +14,8 @@
       "DAQ-GetValue": "daq-getValue.js",
       "DAQ-TagLogger": "daq-tagLogger.js",
       "DAQ-TagLogGetter": "daq-tagLogGetter.js",
-      "DAQ-Accumulator": "daq-accumulator.js"
+      "DAQ-Accumulator": "daq-accumulator.js",
+      "DAQ-UUID": "daq-uuidGenerator.js"
     }
   },
   "dependencies": {

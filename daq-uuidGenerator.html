@@ -1,0 +1,33 @@
+<!-- daq-uuidGenerator.html -->
+<script type="text/javascript">
+    RED.nodes.registerType('DAQ-UUID',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            field: {value:"payload"},
+            msgTopic: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-key",
+        label: function() {
+            return this.name||"DAQ-UUID";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="DAQ-UUID">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-field"><i class="fa fa-database"></i> Output to</label>
+        <input type="text" id="node-input-field" placeholder="payload or msg.myProp">
+    </div>
+    <div class="form-row">
+        <label for="node-input-msgTopic"><i class="fa fa-bookmark"></i> Topic (optional)</label>
+        <input type="text" id="node-input-msgTopic" placeholder="msg.topic">
+    </div>
+</script>
