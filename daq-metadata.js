@@ -70,7 +70,9 @@ module.exports = function(RED) {
             db[config.id] = meta;
             node.context().global.set(dbName, db);
 
-            //console.log("daq:", db);
+            // mqtt config
+            msg.topic = unifiedNamespace;
+            msg.payload = value;
 
             // Log for debugging
             node.debug(`Updated daqStore with path: ${config.id}`);

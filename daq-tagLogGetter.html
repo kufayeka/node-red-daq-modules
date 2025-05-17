@@ -5,71 +5,79 @@
         defaults: {
             name: {value: ""},
             namespacePath: {value: ""},
+            retrievalMode: { value: "all" },
             timeMode: {value: "between"},
+            dataTopic: { value: "" },
+
             startTimestamp: {value: ""},
             endTimestamp: {value: ""},
             exactTimestamp: {value: ""},
             windowAmount: {value: "5"},
             windowUnit: {value: "m"},
-            useProp1: {value: false},
-            prop1Operator: {value: "="},
-            prop1Value: {value: ""},
-            prop1Logic: {value: "AND"},
-            useProp2: {value: false},
-            prop2Operator: {value: "="},
-            prop2Value: {value: ""},
-            prop2Logic: {value: "AND"},
-            useProp3: {value: false},
-            prop3Operator: {value: "="},
-            prop3Value: {value: ""},
-            prop3Logic: {value: "AND"},
-            useProp4: {value: false},
-            prop4Operator: {value: "="},
-            prop4Value: {value: ""},
-            prop4Logic: {value: "AND"},
-            useProp5: {value: false},
-            prop5Operator: {value: "="},
-            prop5Value: {value: ""},
-            prop5Logic: {value: "AND"}
+
+            // PROPS 1–10
+            useProp1: {value: false},  prop1Operator: {value: "="},  prop1Value: {value: ""},  prop1Logic: {value: "AND"},
+            useProp2: {value: false},  prop2Operator: {value: "="},  prop2Value: {value: ""},  prop2Logic: {value: "AND"},
+            useProp3: {value: false},  prop3Operator: {value: "="},  prop3Value: {value: ""},  prop3Logic: {value: "AND"},
+            useProp4: {value: false},  prop4Operator: {value: "="},  prop4Value: {value: ""},  prop4Logic: {value: "AND"},
+            useProp5: {value: false},  prop5Operator: {value: "="},  prop5Value: {value: ""},  prop5Logic: {value: "AND"},
+            useProp6: {value: false},  prop6Operator: {value: "="},  prop6Value: {value: ""},  prop6Logic: {value: "AND"},
+            useProp7: {value: false},  prop7Operator: {value: "="},  prop7Value: {value: ""},  prop7Logic: {value: "AND"},
+            useProp8: {value: false},  prop8Operator: {value: "="},  prop8Value: {value: ""},  prop8Logic: {value: "AND"},
+            useProp9: {value: false},  prop9Operator: {value: "="},  prop9Value: {value: ""},  prop9Logic: {value: "AND"},
+            useProp10:{value: false},  prop10Operator:{value: "="},  prop10Value:{value: ""},  prop10Logic:{value: "AND"}
         },
         inputs: 1,
         outputs: 1,
         icon: "font-awesome/fa-database",
-        label: function () {
-            return this.name || "DAQ-TagLogGetter";
-        },
+        label: function () { return this.name||"DAQ-TagLogGetter"; },
         oneditprepare: function () {
             var node = this;
-
             function loadNamespacePaths() {
                 $.getJSON('/daq/namespaces', function (data) {
                     var select = $('#node-input-namespacePath');
                     select.empty().append('<option value="">-- Select a path --</option>');
-                    data.forEach(path => select.append($('<option></option>').val(path).text(path)));
+                    data.forEach(path => select.append($('<option>').val(path).text(path)));
                     if (node.namespacePath) select.val(node.namespacePath);
-                }).fail(() => console.log("Failed to load namespace paths"));
+                });
             }
-
+            $('#node-input-retrievalMode').val(node.retrievalMode||'all');
             loadNamespacePaths();
             $('#node-input-timeMode').on('change', function () {
                 $('.mode-row').hide();
                 $('.mode-' + $(this).val()).show();
             }).trigger('change');
+        },
+        oneditsave: function() {
+            // nothing special
         }
     });
 </script>
+
 
 <script type="text/html" data-template-name="DAQ-TagLogGetter">
     <div class="form-row">
         <label for="node-input-name">Name</label>
         <input type="text" id="node-input-name">
     </div>
-
     <div class="form-row">
         <label for="node-input-namespacePath">Namespace</label>
         <select id="node-input-namespacePath" style="width:100%"></select>
     </div>
-
+    <div class="form-row">
+        <label for="node-input-retrievalMode">Retrieval Mode</label>
+        <select id="node-input-retrievalMode">
+            <option value="all">All</option>
+            <option value="first">First by timestamp</option>
+            <option value="last">Last by timestamp</option>
+            <option value="first_last">First & Last</option>
+            <option value="row_count">Row Count</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-dataTopic">Data Topic</label>
+        <input type="text" id="node-input-dataTopic">
+    </div>
     <div class="form-row">
         <label for="node-input-timeMode">Time Mode</label>
         <select id="node-input-timeMode">
@@ -79,8 +87,7 @@
             <option value="all">All Time</option>
         </select>
     </div>
-
-    <!-- Time Configuration -->
+    <!-- Time configs -->
     <div class="form-row mode-row mode-between">
         <label>Start Time</label>
         <input type="text" id="node-input-startTimestamp" placeholder="YYYY-MM-DDTHH:MM:SSZ">
@@ -95,8 +102,8 @@
     </div>
     <div class="form-row mode-row mode-window">
         <label>Last</label>
-        <input type="number" id="node-input-windowAmount" style="width: 60px;" min="1">
-        <select id="node-input-windowUnit" style="width: auto;">
+        <input type="number" id="node-input-windowAmount" style="width:60px" min="1">
+        <select id="node-input-windowUnit" style="width:auto">
             <option value="s">seconds</option>
             <option value="m">minutes</option>
             <option value="h">hours</option>
@@ -106,104 +113,177 @@
         </select>
     </div>
 
-    <!-- Tag Properties Section -->
+    <!-- Tag Properties Conditions -->
     <div class="form-row">
-        <label style="font-weight: bold; margin-top: 15px;">Tag Properties Conditions</label>
+        <label style="font-weight:bold; margin-top:15px;">Tag Properties Conditions</label>
     </div>
 
-    <!-- Property 1-5 -->
-    <div class="form-row prop-condition" style="margin-bottom: 8px;">
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="checkbox" id="node-input-useProp1" style="margin-right: 2px;">
-            <label style="min-width: 70px;">Property 1</label>
-            <select id="node-input-prop1Operator" style="width: 80px;">
-                <option value="=">=</option>
-                <option value="!=">!=</option>
-                <option value=">">></option>
-                <option value="<"><</option>
+    <!-- Property 1 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp1" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 1</label>
+            <select id="node-input-prop1Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
                 <option value="LIKE">LIKE</option>
             </select>
-            <input type="text" id="node-input-prop1Value" placeholder="Value" style="width: 200px;">
-            <select id="node-input-prop1Logic" style="width: 80px;">
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
+            <input type="text" id="node-input-prop1Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop1Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
             </select>
         </div>
     </div>
 
-    <!-- Repeat for Properties 2-5 -->
-    <div class="form-row prop-condition" style="margin-bottom: 8px;">
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="checkbox" id="node-input-useProp2" style="margin-right: 2px;">
-            <label style="min-width: 70px;">Property 2</label>
-            <select id="node-input-prop2Operator" style="width: 80px;">
-                <option value="=">=</option>
-                <option value="!=">!=</option>
-                <option value=">">></option>
-                <option value="<"><</option>
+    <!-- Property 2 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp2" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 2</label>
+            <select id="node-input-prop2Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
                 <option value="LIKE">LIKE</option>
             </select>
-            <input type="text" id="node-input-prop2Value" placeholder="Value" style="width: 200px;">
-            <select id="node-input-prop2Logic" style="width: 80px;">
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
+            <input type="text" id="node-input-prop2Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop2Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
             </select>
         </div>
     </div>
 
-    <div class="form-row prop-condition" style="margin-bottom: 8px;">
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="checkbox" id="node-input-useProp3" style="margin-right: 2px;">
-            <label style="min-width: 70px;">Property 3</label>
-            <select id="node-input-prop3Operator" style="width: 80px;">
-                <option value="=">=</option>
-                <option value="!=">!=</option>
-                <option value=">">></option>
-                <option value="<"><</option>
+    <!-- Property 3 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp3" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 3</label>
+            <select id="node-input-prop3Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
                 <option value="LIKE">LIKE</option>
             </select>
-            <input type="text" id="node-input-prop3Value" placeholder="Value" style="width: 200px;">
-            <select id="node-input-prop3Logic" style="width: 80px;">
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
+            <input type="text" id="node-input-prop3Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop3Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
             </select>
         </div>
     </div>
 
-    <div class="form-row prop-condition" style="margin-bottom: 8px;">
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="checkbox" id="node-input-useProp4" style="margin-right: 2px;">
-            <label style="min-width: 70px;">Property 4</label>
-            <select id="node-input-prop4Operator" style="width: 80px;">
-                <option value="=">=</option>
-                <option value="!=">!=</option>
-                <option value=">">></option>
-                <option value="<"><</option>
+    <!-- Property 4 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp4" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 4</label>
+            <select id="node-input-prop4Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
                 <option value="LIKE">LIKE</option>
             </select>
-            <input type="text" id="node-input-prop4Value" placeholder="Value" style="width: 200px;">
-            <select id="node-input-prop4Logic" style="width: 80px;">
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
+            <input type="text" id="node-input-prop4Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop4Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
             </select>
         </div>
     </div>
 
-    <div class="form-row prop-condition" style="margin-bottom: 8px;">
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="checkbox" id="node-input-useProp5" style="margin-right: 2px;">
-            <label style="min-width: 70px;">Property 5</label>
-            <select id="node-input-prop5Operator" style="width: 80px;">
-                <option value="=">=</option>
-                <option value="!=">!=</option>
-                <option value=">">></option>
-                <option value="<"><</option>
+    <!-- Property 5 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp5" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 5</label>
+            <select id="node-input-prop5Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
                 <option value="LIKE">LIKE</option>
             </select>
-            <input type="text" id="node-input-prop5Value" placeholder="Value" style="width: 200px;">
-            <select id="node-input-prop5Logic" style="width: 80px;">
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
+            <input type="text" id="node-input-prop5Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop5Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Property 6 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp6" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 6</label>
+            <select id="node-input-prop6Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop6Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop6Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Property 7 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp7" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 7</label>
+            <select id="node-input-prop7Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop7Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop7Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Property 8 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp8" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 8</label>
+            <select id="node-input-prop8Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop8Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop8Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Property 9 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp9" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 9</label>
+            <select id="node-input-prop9Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop9Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop9Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Property 10 -->
+    <div class="form-row prop-condition" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+            <input type="checkbox" id="node-input-useProp10" style="margin-right:2px;">
+            <label style="min-width:70px;">Property 10</label>
+            <select id="node-input-prop10Operator" style="width:80px;">
+                <option value="=">=</option><option value="!=">!=</option>
+                <option value=">">></option><option value="<"><</option>
+                <option value="LIKE">LIKE</option>
+            </select>
+            <input type="text" id="node-input-prop10Value" placeholder="Value" style="width:200px;">
+            <select id="node-input-prop10Logic" style="width:80px;">
+                <option value="AND">AND</option><option value="OR">OR</option>
             </select>
         </div>
     </div>
