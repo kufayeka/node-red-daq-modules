@@ -6,16 +6,16 @@
             name: {value: ""},
             namespacePath: {value: ""},
             // tagProperties 1–10
-            tagProperties1Path: {value: ""}, tagProperties1Type: {value: "whole"}, tagProperties1ValuePath: {value: ""}, tagProperties1FixedValue:{value: ""},
-            tagProperties2Path: {value: ""}, tagProperties2Type: {value: "whole"}, tagProperties2ValuePath: {value: ""}, tagProperties2FixedValue:{value: ""},
-            tagProperties3Path: {value: ""}, tagProperties3Type: {value: "whole"}, tagProperties3ValuePath: {value: ""}, tagProperties3FixedValue:{value: ""},
-            tagProperties4Path: {value: ""}, tagProperties4Type: {value: "whole"}, tagProperties4ValuePath: {value: ""}, tagProperties4FixedValue:{value: ""},
-            tagProperties5Path: {value: ""}, tagProperties5Type: {value: "whole"}, tagProperties5ValuePath: {value: ""}, tagProperties5FixedValue:{value: ""},
-            tagProperties6Path: {value: ""}, tagProperties6Type: {value: "whole"}, tagProperties6ValuePath: {value: ""}, tagProperties6FixedValue:{value: ""},
-            tagProperties7Path: {value: ""}, tagProperties7Type: {value: "whole"}, tagProperties7ValuePath: {value: ""}, tagProperties7FixedValue:{value: ""},
-            tagProperties8Path: {value: ""}, tagProperties8Type: {value: "whole"}, tagProperties8ValuePath: {value: ""}, tagProperties8FixedValue:{value: ""},
-            tagProperties9Path: {value: ""}, tagProperties9Type: {value: "whole"}, tagProperties9ValuePath: {value: ""}, tagProperties9FixedValue:{value: ""},
-            tagProperties10Path: {value: ""}, tagProperties10Type: {value: "whole"}, tagProperties10ValuePath: {value: ""}, tagProperties10FixedValue:{value: ""},
+            tagProperties1Label: {value: ""}, tagProperties1Path: {value: ""}, tagProperties1Type: {value: "whole"}, tagProperties1ValuePath: {value: ""}, tagProperties1FixedValue:{value: ""},
+            tagProperties2Label: {value: ""}, tagProperties2Path: {value: ""}, tagProperties2Type: {value: "whole"}, tagProperties2ValuePath: {value: ""}, tagProperties2FixedValue:{value: ""},
+            tagProperties3Label: {value: ""}, tagProperties3Path: {value: ""}, tagProperties3Type: {value: "whole"}, tagProperties3ValuePath: {value: ""}, tagProperties3FixedValue:{value: ""},
+            tagProperties4Label: {value: ""}, tagProperties4Path: {value: ""}, tagProperties4Type: {value: "whole"}, tagProperties4ValuePath: {value: ""}, tagProperties4FixedValue:{value: ""},
+            tagProperties5Label: {value: ""}, tagProperties5Path: {value: ""}, tagProperties5Type: {value: "whole"}, tagProperties5ValuePath: {value: ""}, tagProperties5FixedValue:{value: ""},
+            tagProperties6Label: {value: ""}, tagProperties6Path: {value: ""}, tagProperties6Type: {value: "whole"}, tagProperties6ValuePath: {value: ""}, tagProperties6FixedValue:{value: ""},
+            tagProperties7Label: {value: ""}, tagProperties7Path: {value: ""}, tagProperties7Type: {value: "whole"}, tagProperties7ValuePath: {value: ""}, tagProperties7FixedValue:{value: ""},
+            tagProperties8Label: {value: ""}, tagProperties8Path: {value: ""}, tagProperties8Type: {value: "whole"}, tagProperties8ValuePath: {value: ""}, tagProperties8FixedValue:{value: ""},
+            tagProperties9Label: {value: ""}, tagProperties9Path: {value: ""}, tagProperties9Type: {value: "whole"}, tagProperties9ValuePath: {value: ""}, tagProperties9FixedValue:{value: ""},
+            tagProperties10Label: {value: ""}, tagProperties10Path: {value: ""}, tagProperties10Type: {value: "whole"}, tagProperties10ValuePath: {value: ""}, tagProperties10FixedValue:{value: ""},
         },
         inputs: 1,
         outputs: 1,
@@ -88,12 +88,16 @@
     <div class="divider"></div>
     <b>Notes:</b>
     <p>Tag Property 1–3 by default is <strong>cached</strong> in the QuestDB table for blazing‑fast reads (no full‑table scans).<br>
-        …so please use those five tags for low‑cardinality/categorical data (example: true/false, on/off, mode, status, etc.)<br>
+        …so please use those three tags for low‑cardinality/categorical data (example: true/false, on/off, mode, status, etc.)<br>
         For highly dynamic or random values (UUIDs, IDs), switch to non‑cached: Tag Property 4–10.</p>
 
     <!-- Tag Property 1 -->
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 1 (cached)</label>
+    <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties1Label" placeholder="e.g., machine state">
+    </div>
     <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties1Path" class="tag-property-ns" style="width:48%">
@@ -118,6 +122,10 @@
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 2 (cached)</label>
     <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties2Label" placeholder="e.g., machine mode">
+    </div>
+    <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties2Path" class="tag-property-ns" style="width:48%">
             <option value="">-- Select Namespace --</option>
@@ -140,6 +148,10 @@
     <!-- Tag Property 3 -->
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 3 (cached)</label>
+    <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties3Label" placeholder="e.g., category">
+    </div>
     <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties3Path" class="tag-property-ns" style="width:48%">
@@ -164,6 +176,10 @@
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 4</label>
     <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties4Label" placeholder="e.g., category">
+    </div>
+    <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties4Path" class="tag-property-ns" style="width:48%">
             <option value="">-- Select Namespace --</option>
@@ -186,6 +202,10 @@
     <!-- Tag Property 5 -->
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 5</label>
+    <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties5Label" placeholder="e.g., category">
+    </div>
     <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties5Path" class="tag-property-ns" style="width:48%">
@@ -210,6 +230,10 @@
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 6</label>
     <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties6Label" placeholder="e.g., category">
+    </div>
+    <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties6Path" class="tag-property-ns" style="width:48%">
             <option value="">-- Select Namespace --</option>
@@ -232,6 +256,10 @@
     <!-- Tag Property 7 -->
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 7</label>
+    <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties7Label" placeholder="e.g., category">
+    </div>
     <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties7Path" class="tag-property-ns" style="width:48%">
@@ -256,6 +284,10 @@
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 8</label>
     <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties8Label" placeholder="e.g., category">
+    </div>
+    <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties8Path" class="tag-property-ns" style="width:48%">
             <option value="">-- Select Namespace --</option>
@@ -279,6 +311,10 @@
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 9</label>
     <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties9Label" placeholder="e.g., category">
+    </div>
+    <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties9Path" class="tag-property-ns" style="width:48%">
             <option value="">-- Select Namespace --</option>
@@ -301,6 +337,10 @@
     <!-- Tag Property 10 -->
     <div class="divider"></div>
     <label><i class="fa fa-tags"></i> Tag Property 10</label>
+    <div class="form-row">
+        <label> Label</label>
+        <input type="text" id="node-input-tagProperties10Label" placeholder="e.g., category">
+    </div>
     <div class="form-row">
         <label> UNS</label>
         <select id="node-input-tagProperties10Path" class="tag-property-ns" style="width:48%">
