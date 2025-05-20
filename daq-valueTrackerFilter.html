@@ -1,0 +1,124 @@
+<script type="text/javascript">
+    RED.nodes.registerType('DAQ-ValueTrackerFilter',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name:           { value:"" },
+            topic:          { value:"" },
+            topicType:      { value:"str" },
+            property1:      { value:"" },
+            property1Type:  { value:"str" },
+            property2:      { value:"" },
+            property2Type:  { value:"str" },
+            property3:      { value:"" },
+            property3Type:  { value:"str" },
+            property4:      { value:"" },
+            property4Type:  { value:"str" },
+            property5:      { value:"" },
+            property5Type:  { value:"str" },
+            property6:      { value:"" },
+            property6Type:  { value:"str" },
+            property7:      { value:"" },
+            property7Type:  { value:"str" },
+            property8:      { value:"" },
+            property8Type:  { value:"str" },
+            property9:      { value:"" },
+            property9Type:  { value:"str" },
+            property10:     { value:"" },
+            property10Type: { value:"str" }
+        },
+        inputs:1,
+        outputs:1,
+        icon: "function.png",
+        label: function() { return this.name||"DAQ-ValueTrackerFilter"; },
+        oneditprepare: function() {
+            // init typedInput untuk topic
+            $('#node-input-topic').typedInput({
+                default: "str",
+                typeField: $('#node-input-topicType'),
+                types: ["msg","flow","global","str"]
+            });
+            // manual typedInput untuk property1..10
+            $('#node-input-property1').typedInput({ default: "str", typeField: $('#node-input-property1Type'), types: ["msg","flow","global","str"] });
+            $('#node-input-property2').typedInput({ default: "str", typeField: $('#node-input-property2Type'), types: ["msg","flow","global","str"] });
+            $('#node-input-property3').typedInput({ default: "str", typeField: $('#node-input-property3Type'), types: ["msg","flow","global","str"] });
+            $('#node-input-property4').typedInput({ default: "str", typeField: $('#node-input-property4Type'), types: ["msg","flow","global","str"] });
+            $('#node-input-property5').typedInput({ default: "str", typeField: $('#node-input-property5Type'), types: ["msg","flow","global","str"] });
+            $('#node-input-property6').typedInput({ default: "str", typeField: $('#node-input-property6Type'), types: ["msg","flow","global","str"] });
+            $('#node-input-property7').typedInput({ default: "str", typeField: $('#node-input-property7Type'), types: ["msg","flow","global","str"] });
+            $('#node-input-property8').typedInput({ default: "str", typeField: $('#node-input-property8Type'), types: ["msg","flow","global","str"] });
+            $('#node-input-property9').typedInput({ default: "str", typeField: $('#node-input-property9Type'), types: ["msg","flow","global","str"] });
+            $('#node-input-property10').typedInput({ default: "str", typeField: $('#node-input-property10Type'), types: ["msg","flow","global","str"] });
+        }
+    })
+</script>
+
+<script type="text/html" data-template-name="DAQ-ValueTrackerFilter">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-topic" style="margin-right:-25px">Topic</label>
+        <input type="text" id="node-input-topic"/>
+        <input type="hidden" id="node-input-topicType"/>
+    </div>
+
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property1" style="margin-right:-25px">Property 1</label>
+        <input type="text" id="node-input-property1"/>
+        <input type="hidden" id="node-input-property1Type"/>
+    </div>
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property2" style="margin-right:-25px">Property 2</label>
+        <input type="text" id="node-input-property2"/>
+        <input type="hidden" id="node-input-property2Type"/>
+    </div>
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property3" style="margin-right:-25px">Property 3</label>
+        <input type="text" id="node-input-property3"/>
+        <input type="hidden" id="node-input-property3Type"/>
+    </div>
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property4" style="margin-right:-25px">Property 4</label>
+        <input type="text" id="node-input-property4"/>
+        <input type="hidden" id="node-input-property4Type"/>
+    </div>
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property5" style="margin-right:-25px">Property 5</label>
+        <input type="text" id="node-input-property5"/>
+        <input type="hidden" id="node-input-property5Type"/>
+    </div>
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property6" style="margin-right:-25px">Property 6</label>
+        <input type="text" id="node-input-property6"/>
+        <input type="hidden" id="node-input-property6Type"/>
+    </div>
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property7" style="margin-right:-25px">Property 7</label>
+        <input type="text" id="node-input-property7"/>
+        <input type="hidden" id="node-input-property7Type"/>
+    </div>
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property8" style="margin-right:-25px">Property 8</label>
+        <input type="text" id="node-input-property8"/>
+        <input type="hidden" id="node-input-property8Type"/>
+    </div>
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property9" style="margin-right:-25px">Property 9</label>
+        <input type="text" id="node-input-property9"/>
+        <input type="hidden" id="node-input-property9Type"/>
+    </div>
+    <div class="form-row" style="padding-left:25px">
+        <label for="node-input-property10" style="margin-right:-25px">Property 10</label>
+        <input type="text" id="node-input-property10"/>
+        <input type="hidden" id="node-input-property10Type"/>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="DAQ-ValueTrackerFilter">
+    <p>
+        Pilih untuk setiap <strong>Topic</strong> dan <strong>Property 1–10</strong> apakah ambil dari <code>msg</code>, <code>flow</code>, <code>global</code>, atau literal <code>str</code>.
+    </p>
+</script>

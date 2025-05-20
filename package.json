@@ -15,11 +15,14 @@
       "DAQ-TagLogger": "daq-tagLogger.js",
       "DAQ-TagLogGetter": "daq-tagLogGetter.js",
       "DAQ-Accumulator": "daq-accumulator.js",
-      "DAQ-UUID": "daq-uuidGenerator.js"
+      "DAQ-UUID": "daq-uuidGenerator.js",
+      "DAQ-ValueTracker": "daq-valueTracker.js",
+      "DAQ-ValueTrackerFilter": "daq-valueTrackerFilter.js"
     }
   },
   "dependencies": {
     "object-path": "^0.11.8",
+    "snap-db": "^1.1.6",
     "uuid": "^11.1.0"
   }
 }
