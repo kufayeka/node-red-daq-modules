@@ -1,0 +1,67 @@
+<script type="text/html" data-template-name="DAQ-AccountManager">
+    <div class="form-row">
+        <label for="node-input-name">Name</label>
+        <input type="text" id="node-input-name" placeholder="(optional)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-host">Host</label>
+        <input type="text" id="node-input-host" placeholder="127.0.0.1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-port">Port</label>
+        <input type="number" id="node-input-port" placeholder="8812">
+    </div>
+    <div class="form-row">
+        <label for="node-input-database">Database</label>
+        <input type="text" id="node-input-database" placeholder="qdb">
+    </div>
+    <div class="form-row">
+        <label for="node-input-username">Username</label>
+        <input type="text" id="node-input-username" placeholder="admin">
+    </div>
+    <div class="form-row">
+        <label for="node-input-password">Password</label>
+        <input type="password" id="node-input-password">
+    </div>
+    <div class="form-tips">
+        <b>Tips:</b> Gunakan <code>msg.operation</code> untuk operasi:<br>
+        <code>create</code>, <code>update</code>, <code>delete</code>, <code>find</code>, <code>findAll</code>, <code>login</code>
+        <br><br>
+        <b>Example:</b> <code>msg.operation = 'create'</code>
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('DAQ-AccountManager', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value: ""},
+            host: {value: "127.0.0.1", required: true},
+            port: {value: 8812, required: true},
+            database: {value: "qdb", required: true},
+            username: {value: "admin", required: true},
+            password: {value: "", required: true}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-user",
+        align: "left",
+        label: function () {
+            return this.name || "DAQ-AccountManager";
+        },
+        oneditprepare: function () {
+            // nothing needed here for now, tapi bisa dikembangin (misal: test koneksi, dsb)
+        }
+    });
+</script>
+
+<script type="text/html" data-help-name="DAQ-AccountManager">
+    <p><b>DAQ-AccountManager</b> untuk QuestDB/PostgreSQL:</p>
+    <ul>
+        <li>CRUD & Login akun (id, fullname, role, username, password, status, timestamps)</li>
+        <li>Auto hash password (<code>bcryptjs</code>)</li>
+        <li>Atur via <code>msg.operation</code>: <b>create</b>, <b>update</b>, <b>delete</b>, <b>find</b>, <b>findAll</b>, <b>login</b></li>
+        <li><b>msg.payload</b> isikan sesuai kebutuhan operasi (lihat README/Docs)</li>
+    </ul>
+</script>

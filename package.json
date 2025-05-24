@@ -16,12 +16,15 @@
       "DAQ-TagLogGetter": "daq-tagLogGetter.js",
       "DAQ-Accumulator": "daq-accumulator.js",
       "DAQ-UUID": "daq-uuidGenerator.js",
+      "DAQ-AccountManager": "daq-accountManager.js",
       "DAQ-ValueTracker": "daq-valueTracker.js",
       "DAQ-ValueTrackerFilter": "daq-valueTrackerFilter.js"
     }
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "object-path": "^0.11.8",
+    "pg": "^8.16.0",
     "snap-db": "^1.1.6",
     "uuid": "^11.1.0"
   }
