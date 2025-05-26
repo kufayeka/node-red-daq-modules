@@ -80,15 +80,16 @@ module.exports = function(RED) {
         // Table QuestDB
         pool.query(`
             CREATE TABLE IF NOT EXISTS accounts (
-                id STRING,
-                fullname STRING,
-                role STRING,
-                username STRING,
-                password STRING,
-                status STRING,
-                created_at TIMESTAMP,
-                updated_at TIMESTAMP,
-                delete_at TIMESTAMP
+                                                    id STRING,
+                                                    fullname STRING,
+                                                    role STRING,
+                                                    username STRING,
+                                                    password STRING,
+                                                    status STRING,
+                                                    created_at TIMESTAMP,
+                                                    updated_at TIMESTAMP,
+                                                    last_login TIMESTAMP,
+                                                    delete_at TIMESTAMP
             ) timestamp(created_at);
         `).catch(e => {
             node.status({ fill: "red", shape: "ring", text: `table error | pools: ${activePoolCount()}` });
@@ -197,7 +198,7 @@ module.exports = function(RED) {
         async function findAccount(msg, send, done) {
             const id = msg.payload.id;
             const res = await pool.query(
-                `SELECT id, fullname, role, username, status, created_at, updated_at FROM accounts WHERE id = $1 AND delete_at IS NULL`,
+                `SELECT id, fullname, role, username, status, created_at, updated_at, last_login FROM accounts WHERE id = $1 AND delete_at IS NULL`,
                 [id]
             );
             msg.payload = res.rows[0] || null;
@@ -210,7 +211,7 @@ module.exports = function(RED) {
 
         async function findAllAccounts(msg, send, done) {
             const res = await pool.query(
-                `SELECT id, fullname, role, username, status, created_at, updated_at FROM accounts WHERE delete_at IS NULL ORDER BY fullname`
+                `SELECT id, fullname, role, username, status, created_at, updated_at, last_login FROM accounts WHERE delete_at IS NULL ORDER BY fullname`
             );
             msg.payload = res.rows;
             node.status({ fill: "green", shape: "dot", text: `findAll | pools: ${activePoolCount()}` });
@@ -234,7 +235,14 @@ module.exports = function(RED) {
                 msg.payload = { success: false, error: "Wrong password!" };
                 node.status({ fill: "red", shape: "ring", text: `login failed | pools: ${activePoolCount()}` });
             } else {
+                // Update last_login timestamp
+                const now = new Date().toISOString();
+                await pool.query(
+                    `UPDATE accounts SET last_login = $1 WHERE id = $2`,
+                    [now, user.id]
+                );
                 delete user.password;
+                user.last_login = now;
                 msg.payload = { success: true, user };
                 node.status({ fill: "green", shape: "dot", text: `login success | pools: ${activePoolCount()}` });
             }
