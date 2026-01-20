@@ -1,37 +1,55 @@
 module.exports = function(RED) {
+    let adminEndpointsRegistered = false;
+
+    function sortNamespacePaths(paths) {
+        return paths
+            .filter(Boolean)
+            .map(String)
+            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+    }
+
     function DAQGetValueNode(config) {
         RED.nodes.createNode(this, config);
         const node = this;
 
-        // Endpoint for getting available namespace paths
-        RED.httpAdmin.get("/daq/namespaces", function(req, res) {
-            // Create a merged list of all available paths from all nodes' global context
-            const dbName = 'daqStore';
-            const db = node.context().global.get(dbName) || {};
+        // Register admin endpoints once (global context is shared across nodes)
+        if (!adminEndpointsRegistered) {
+            adminEndpointsRegistered = true;
 
-            // Get all namespace paths
-            const pathsList = Object.values(db).map(entry => entry.namespace);
+            // Endpoint for getting available namespace paths
+            // Supports optional query param: ?q=substring (case-insensitive)
+            RED.httpAdmin.get("/daq/namespaces", function(req, res) {
+                const dbName = "daqStore";
+                const db = node.context().global.get(dbName) || {};
 
-            // Send as JSON response
-            res.json(pathsList);
-        });
+                const rawList = Object.values(db)
+                    .map((entry) => entry && entry.namespace)
+                    .filter(Boolean);
 
-        // Endpoint for clearing the DAQ store
-        RED.httpAdmin.post("/daq/clear", function(req, res) {
-            try {
-                // Clear the global daqStore
-                node.context().global.set("daqStore", {});
+                // Deduplicate
+                const unique = Array.from(new Set(rawList));
 
-                // Log the action
-                RED.log.info("DAQ store cleared by user");
+                // Optional search/filter
+                const q = (req.query && typeof req.query.q === "string") ? req.query.q.trim() : "";
+                const filtered = q
+                    ? unique.filter((p) => String(p).toLowerCase().includes(q.toLowerCase()))
+                    : unique;
 
-                // Return success
-                res.sendStatus(200);
-            } catch (error) {
-                RED.log.error("Error clearing DAQ store: " + error.message);
-                res.sendStatus(500);
-            }
-        });
+                res.json(sortNamespacePaths(filtered));
+            });
+
+            // Endpoint for clearing the DAQ store
+            RED.httpAdmin.post("/daq/clear", function(req, res) {
+                try {
+                    node.context().global.set("daqStore", {});
+                    RED.log.info("DAQ store cleared by user");
+                    res.sendStatus(200);
+                } catch (error) {
+                    RED.log.error("Error clearing DAQ store: " + error.message);
+                    res.sendStatus(500);
+                }
+            });
+        }
 
         node.status({fill:"grey", shape:"ring", text:"ready"});
 
